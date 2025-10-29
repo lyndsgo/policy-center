@@ -34,6 +34,12 @@ export default defineConfig([
           patterns: [{ regex: "^@mui/[^/]+$" }],
         },
       ],
+      "react-refresh/only-export-components": "off", // just for now
     },
+    ignores: [
+      "vite.config.ts",
+      "vitest.config.ts",
+      "public/mockServiceWorker.js",
+    ],
   },
 ]);

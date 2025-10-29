@@ -1,13 +1,6 @@
 import { http, HttpResponse } from "msw";
-import type { User } from "@/types/user";
+import { MOCK_USER } from "@/mocks/data/user";
 
-export const GET_USER_DATA = http.get(
-  `${import.meta.env.VITE_API_URL}/user`,
-  () => {
-    return HttpResponse.json({
-      id: "lg-123",
-      firstname: "Lyndsay",
-      lastname: "Gould",
-    } satisfies User);
-  },
-);
+export const GET_USER_DATA = http.get(`/user`, () => {
+  return HttpResponse.json(MOCK_USER);
+});

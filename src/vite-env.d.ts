@@ -1,3 +1,5 @@
+/// <reference types="@testing-library/jest-dom" />
+
 interface ViteTypeOptions {
   // disallow unknown keys.
   strictImportMetaEnv: unknown;

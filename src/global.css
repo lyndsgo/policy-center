@@ -1,3 +1,4 @@
+@layer theme, base, mui, components, utilities;
 @import "tailwindcss";
 
 @layer base {
@@ -6,4 +7,14 @@
   #root {
     height: 100%;
   }
+
+  body {
+    background-color: #f3f7f7;
+  }
+}
+
+@theme {
+  --color-brand-dark: #0f222d;
+  --color-brand-light: #f3f7f7;
+  --color-brand-accent: #3d69e1;
 }
