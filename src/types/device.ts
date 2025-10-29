@@ -9,7 +9,7 @@ export interface Device {
   id: string;
   name: string;
   serial: string;
-  protected: "true" | "false";
+  protected: boolean;
   policyEnd: string;
   policies: DevicePolicy[];
 }

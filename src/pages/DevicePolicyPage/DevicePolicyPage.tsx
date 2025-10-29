@@ -1,3 +1,4 @@
+import { format, parseISO } from "date-fns";
 import ToggleInput from "@/components/ToggleInput/ToggleInput";
 import { useNotificationContext } from "@/contexts/NotificationContext";
 import { useDeviceData } from "@/hooks/useDeviceData";
@@ -48,7 +49,7 @@ const DevicePolicyPage = () => {
     updatePolicy.mutate({ id, value });
   };
 
-  return isLoading ? (
+  return isLoading || !deviceData ? (
     <>Loading</>
   ) : (
     <>
@@ -60,20 +61,20 @@ const DevicePolicyPage = () => {
       </Typography>
       <dl className="grid auto-cols-auto grid-cols-2">
         <dt>Name:</dt>
-        <dd>{deviceData?.name}</dd>
+        <dd>{deviceData.name}</dd>
         <dt>Serial:</dt>
-        <dd>{deviceData?.serial}</dd>
+        <dd>{deviceData.serial}</dd>
         <dt>Status:</dt>
-        <dd>{deviceData?.protected ? "Protected" : "Unprotected"}</dd>
+        <dd>{deviceData.protected ? "Protected" : "Unprotected"}</dd>
         <dt>Policy End:</dt>
-        <dd>{deviceData?.policyEnd}</dd>
+        <dd>{format(parseISO(deviceData.policyEnd), "dd/MM/yyyy")}</dd>
       </dl>
 
       <Typography variant="h6" component="h2" className="mt-6">
         Rules
       </Typography>
       <FormGroup className="w-full">
-        {deviceData?.policies.map((policy) => {
+        {deviceData.policies.map((policy) => {
           return (
             <Box
               key={policy.id}

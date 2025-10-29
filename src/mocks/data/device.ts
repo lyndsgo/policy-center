@@ -5,7 +5,7 @@ export const MOCK_DEVICE: Device = {
   name: "Lyndsay's MacBook Pro",
   serial: "XQHM2W332L",
   policyEnd: "2026-01-01",
-  protected: "true",
+  protected: true,
   policies: [
     {
       id: "require-encryption",

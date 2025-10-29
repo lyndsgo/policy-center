@@ -34,7 +34,7 @@ const FirewallPage = () => {
     updateFirwallSingleApp.mutate({ id, value });
   };
 
-  return isLoading ? (
+  return isLoading || !securitySettings ? (
     <>Loading</>
   ) : (
     <Box>
@@ -44,10 +44,10 @@ const FirewallPage = () => {
       <ToggleInput
         id="firewall-all"
         label="Enable all by default"
-        value={securitySettings?.firewall}
+        value={securitySettings.firewall}
         onChange={onAllFirewallValueChange}
       />
-      {securitySettings?.firewall === "false" ? (
+      {securitySettings.firewall === "false" ? (
         <>
           <Typography variant="h6" component="h2" className="mt-6">
             Advanced Rules

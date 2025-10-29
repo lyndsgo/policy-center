@@ -74,6 +74,7 @@ I've tried my best to adhere to the WAG AA guidelines, for example:
 - Add route protection for pages that require authentication.
 - Replace MSW mocks with real API endpoints.
 - Add robust error handling and loading states for API requests.
+- I’d use react-hook-form together with Zod for form handling and validation. React-hook-form is good for giving immediate feedback to users. It's more maintainable and scalable than managing form state and validation manually.
 - Evaluate using a global state solution like Zustand for caching and managing server state.
 - Add end-to-end testing, to help ensure the app works as expected across flows (rather than just unit testing).
 - I’d enforce a minimum code-coverage check, either to Husky as a pre-commit, or in the pipeline, so that any PR failing to meet the standard is blocked before merging.
