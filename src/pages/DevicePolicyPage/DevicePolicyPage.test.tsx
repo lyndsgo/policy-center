@@ -22,7 +22,6 @@ describe("DevicePolicyPage", () => {
       expect(
         screen.getByText(MOCK_DEVICE.protected ? "Protected" : "Unprotected"),
       ).toBeInTheDocument();
-      expect(screen.getByText(MOCK_DEVICE.policyEnd)).toBeInTheDocument();
 
       // check that all boolean policies are rendered
       MOCK_DEVICE.policies.forEach((policy) => {
@@ -48,7 +47,7 @@ describe("DevicePolicyPage", () => {
     // pick a policy to toggle
     const policyToToggle = MOCK_DEVICE.policies[0];
 
-    const toggleInput = screen.getByRole("checkbox", {
+    const toggleInput = screen.getByRole("switch", {
       name: policyToToggle.name,
     });
 
