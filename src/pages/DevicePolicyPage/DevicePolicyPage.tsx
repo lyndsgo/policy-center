@@ -1,15 +1,14 @@
-import { format, parseISO } from "date-fns";
 import ToggleInput from "@/components/ToggleInput/ToggleInput";
-import { useNotificationContext } from "@/contexts/NotificationContext";
 import { useDeviceData } from "@/hooks/useDeviceData";
-import { useUpdatePolicy } from "@/hooks/useUpdatePolicy";
+import { useTogglePolicy } from "@/hooks/useTogglePolicy";
 import type { DevicePolicy } from "@/types/device";
 import Box from "@mui/material/Box";
 import FormGroup from "@mui/material/FormGroup";
 import Typography from "@mui/material/Typography";
+import { formateDate } from "@/utils/formate-date";
 
 interface PolicyInputProps extends DevicePolicy {
-  onChange: (id: string, name: string) => void;
+  onChange: (id: string, value: boolean) => void;
 }
 
 export const PolicyInput = ({
@@ -33,20 +32,11 @@ export const PolicyInput = ({
 
 const DevicePolicyPage = () => {
   const { data: deviceData, isLoading } = useDeviceData();
-  const { notify } = useNotificationContext();
 
-  const handleSuccess = () => {
-    notify("success", "Saved");
-  };
+  const togglePolicy = useTogglePolicy();
 
-  const handleError = () => {
-    notify("error", "Please try again!");
-  };
-
-  const updatePolicy = useUpdatePolicy(handleSuccess, handleError);
-
-  const onPolicyValueChange = (id: string, value: string) => {
-    updatePolicy.mutate({ id, value });
+  const onTogglePolicy = (id: string, value: boolean) => {
+    togglePolicy.mutate({ id, value });
   };
 
   return isLoading || !deviceData ? (
@@ -67,7 +57,7 @@ const DevicePolicyPage = () => {
         <dt>Status:</dt>
         <dd>{deviceData.protected ? "Protected" : "Unprotected"}</dd>
         <dt>Policy End:</dt>
-        <dd>{format(parseISO(deviceData.policyEnd), "dd/MM/yyyy")}</dd>
+        <dd>{formateDate(deviceData.policyEnd)}</dd>
       </dl>
 
       <Typography variant="h6" component="h2" className="mt-6">
@@ -78,9 +68,9 @@ const DevicePolicyPage = () => {
           return (
             <Box
               key={policy.id}
-              className="flex w-full items-center justify-between border-b-1 border-gray-300 py-1"
+              className="flex w-full items-center justify-between border-b border-gray-300 py-1"
             >
-              <PolicyInput {...policy} onChange={onPolicyValueChange} />
+              <PolicyInput {...policy} onChange={onTogglePolicy} />
             </Box>
           );
         })}

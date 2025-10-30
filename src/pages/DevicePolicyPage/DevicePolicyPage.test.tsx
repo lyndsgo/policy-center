@@ -20,9 +20,7 @@ describe("DevicePolicyPage", () => {
       expect(screen.getByText(MOCK_DEVICE.name)).toBeInTheDocument();
       expect(screen.getByText(MOCK_DEVICE.serial)).toBeInTheDocument();
       expect(
-        screen.getByText(
-          MOCK_DEVICE.protected === "true" ? "Protected" : "Unprotected",
-        ),
+        screen.getByText(MOCK_DEVICE.protected ? "Protected" : "Unprotected"),
       ).toBeInTheDocument();
       expect(screen.getByText(MOCK_DEVICE.policyEnd)).toBeInTheDocument();
 

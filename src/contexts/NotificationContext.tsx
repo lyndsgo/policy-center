@@ -12,6 +12,7 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import ErrorIcon from "@mui/icons-material/Error";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import InfoOutlineIcon from "@mui/icons-material/InfoOutline";
 import Box from "@mui/material/Box";
 
 export type NotifcationType = "info" | "success" | "error";
@@ -24,11 +25,26 @@ export interface Notification {
 
 interface NotificationContextProps {
   notify: (type: NotifcationType, message: string) => void;
+  notifySaved: () => void;
+  notifyError: () => void;
 }
 
 export const NotificationContext = createContext<NotificationContextProps>({
   notify: () => undefined,
+  notifySaved: () => undefined,
+  notifyError: () => undefined,
 });
+
+const NotificationIcon = ({ type }: { type: NotifcationType }) => {
+  switch (type) {
+    case "success":
+      return <CheckCircleIcon aria-hidden color="success" />;
+    case "error":
+      return <ErrorIcon aria-hidden color="error" />;
+    default:
+      return <InfoOutlineIcon aria-hidden color="primary" />;
+  }
+};
 
 export const NotificationProvider = ({ children }: PropsWithChildren) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -49,6 +65,17 @@ export const NotificationProvider = ({ children }: PropsWithChildren) => {
     }
   }, [notifications, messageInfo, open]);
 
+  // genenric error
+  const notifyError = () => {
+    notify("error", "Please try again!");
+  };
+
+  // generic save
+  const notifySaved = () => {
+    notify("success", "Saved");
+  };
+
+  // custom message
   const notify = (type: NotifcationType, message: string) => {
     setNotifications((prev) => [
       ...prev,
@@ -71,10 +98,10 @@ export const NotificationProvider = ({ children }: PropsWithChildren) => {
   };
 
   return (
-    <NotificationContext.Provider value={{ notify }}>
+    <NotificationContext.Provider value={{ notify, notifySaved, notifyError }}>
       {children}
       <Snackbar
-        key={messageInfo ? messageInfo.key : undefined}
+        key={messageInfo?.key}
         open={open}
         autoHideDuration={3000}
         anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
@@ -83,11 +110,7 @@ export const NotificationProvider = ({ children }: PropsWithChildren) => {
         message={
           messageInfo ? (
             <Box className="flex items-center gap-2">
-              {messageInfo.type === "success" ? (
-                <CheckCircleIcon aria-hidden color="success" />
-              ) : (
-                <ErrorIcon aria-hidden color="error" />
-              )}
+              <NotificationIcon type={messageInfo.type} />
               {messageInfo.message}
             </Box>
           ) : undefined

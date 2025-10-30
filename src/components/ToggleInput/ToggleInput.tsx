@@ -5,9 +5,11 @@ import Switch, { type SwitchProps } from "@mui/material/Switch";
 
 interface ToggleProps {
   id: string;
+  className?: string;
   label: string;
+  hideLabel?: boolean;
   value?: boolean | string;
-  onChange: (id: string, value: string) => void;
+  onChange: (id: string, value: boolean) => void;
 }
 
 const StyledSwitch = ({ ...props }: SwitchProps) => {
@@ -33,14 +35,21 @@ const StyledSwitch = ({ ...props }: SwitchProps) => {
   );
 };
 
-const ToggleInput = ({ id, label, value, onChange }: ToggleProps) => {
+const ToggleInput = ({
+  id,
+  className,
+  label,
+  hideLabel,
+  value,
+  onChange,
+}: ToggleProps) => {
   const [checked, setChecked] = useState(
     value === true || value === "true" ? true : false,
   );
 
   const handleOnChange = useCallback(() => {
     setChecked(!checked);
-    onChange(id, (!checked).toString());
+    onChange(id, !checked);
   }, [id, checked, onChange]);
 
   useEffect(() => {
@@ -50,7 +59,7 @@ const ToggleInput = ({ id, label, value, onChange }: ToggleProps) => {
   return (
     <>
       <FormControlLabel
-        className="m-0 w-full justify-between"
+        className={cn("m-0 w-full justify-between", className)}
         control={
           <StyledSwitch
             sx={{ m: 1 }}
@@ -60,6 +69,11 @@ const ToggleInput = ({ id, label, value, onChange }: ToggleProps) => {
         }
         label={label}
         labelPlacement="start"
+        slotProps={{
+          typography: {
+            className: hideLabel ? "sr-only" : "",
+          },
+        }}
       />
     </>
   );

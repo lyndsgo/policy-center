@@ -63,7 +63,7 @@ export const PageLayout = () => {
         <Box
           id="main"
           component="main"
-          className="flex-grow p-4 md:h-full md:overflow-scroll"
+          className="grow p-4 md:h-full md:overflow-scroll"
         >
           <Box
             className={cn(

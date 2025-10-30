@@ -1,11 +1,11 @@
 import type { Device, DevicePolicy } from "@/types/device";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useNotificationContext } from "@/contexts/NotificationContext";
+import { QUERY_KEY } from "@/mocks/data/query-key";
 
-export const useUpdatePolicy = (
-  onSuccess?: () => void,
-  onError?: () => void,
-) => {
+export const useTogglePolicy = () => {
   const queryClient = useQueryClient();
+  const { notifySaved, notifyError } = useNotificationContext();
 
   return useMutation({
     mutationFn: async ({
@@ -26,13 +26,13 @@ export const useUpdatePolicy = (
     },
     onMutate: async ({ id, value }, context) => {
       // cancel any outgoing refetches (so they don't overwrite our optimistic update)
-      await context.client.cancelQueries({ queryKey: ["deviceData"] });
+      await context.client.cancelQueries({ queryKey: [QUERY_KEY.device] });
 
       // snapshot previous value
-      const previousDeviceData = queryClient.getQueryData(["deviceData"]);
+      const previousDeviceData = queryClient.getQueryData([QUERY_KEY.device]);
 
       // optimistically update to the new value
-      queryClient.setQueryData(["deviceData"], (old: Device) => ({
+      queryClient.setQueryData([QUERY_KEY.device], (old: Device) => ({
         ...old,
         policies: old.policies.map((p: DevicePolicy) =>
           p.id === id ? { ...p, value } : p,
@@ -43,19 +43,18 @@ export const useUpdatePolicy = (
     },
     onError: (_err, _newDevice, onMutateResult, context) => {
       context.client.setQueryData(
-        ["deviceData"],
+        [QUERY_KEY.device],
         onMutateResult?.previousDeviceData,
       );
-      onError?.();
-      console.log("onError", onMutateResult?.previousDeviceData);
+      notifyError();
     },
     onSuccess: (updatedDevice) => {
-      queryClient.setQueryData(["deviceData"], updatedDevice);
-      onSuccess?.();
+      queryClient.setQueryData([QUERY_KEY.device], updatedDevice);
+      notifySaved();
     },
     // adding onSettled is best practise (according to the docs)
     // but if i leave this in it reverts back to the mock data since it's all mock apis
     // onSettled: (_data, _error, _variables, _mutateContext, context) =>
-    //   context.client.invalidateQueries({ queryKey: ["deviceData"] }),
+    //   context.client.invalidateQueries({ queryKey: [QUERY_KEY.device] }),
   });
 };

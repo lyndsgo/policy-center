@@ -1,23 +1,85 @@
-// import { useSecuritySettings } from "@/hooks/useSecuritySettings";
+import ToggleInput from "@/components/ToggleInput/ToggleInput";
+import { usePatchRules } from "@/hooks/usePatchRules";
+import { useTogglePatchRules } from "@/hooks/useTogglePatchRules";
+import { useTogglePatchRuleApplication } from "@/hooks/useTogglePatchRuleApplication";
+import { formateDate } from "@/utils/formate-date";
 import Box from "@mui/material/Box";
+import FormGroup from "@mui/material/FormGroup";
+import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 
 const PatchRulesPage = () => {
-  // const { data: securitySettings, isLoading } = useSecuritySettings();
+  const { data: patchRules, isLoading } = usePatchRules();
 
-  return (
+  const toggleAutoUpdate = useTogglePatchRules();
+  const toggleAutoUpdateApplication = useTogglePatchRuleApplication();
+
+  const onToggleAutoUpdate = (_: string, value: boolean) => {
+    toggleAutoUpdate.mutate({ value });
+  };
+
+  const onToggleAutoUpdateApplication = (id: string, value: boolean) => {
+    toggleAutoUpdateApplication.mutate({ id, value });
+  };
+
+  return isLoading || !patchRules ? (
+    <>Loading</>
+  ) : (
     <Box>
-      <Typography variant="h5" component="h1" sx={{ mb: 2 }}>
+      <Typography variant="h5" component="h1">
         Patch Rules
       </Typography>
-      <Typography component="p" sx={{ mb: 2 }}>
-        This page is a placeholder, I've started thinking about the data
-        structure and you can see how I'd interact with the API.
-      </Typography>
-      <Typography component="p">
-        I'd use the same technique for the security updates here as I did for
-        the firewall updates.
-      </Typography>
+      <ToggleInput
+        id="auto-update-all"
+        label="Enable auto-update for all applications"
+        value={patchRules.autoUpdate}
+        onChange={onToggleAutoUpdate}
+      />
+      {patchRules.autoUpdate ? (
+        <Typography component="p" className="mt-2">
+          Toggle the above for more granular control over your applications
+        </Typography>
+      ) : (
+        <>
+          <Typography variant="body1" component="h2" className="mt-2">
+            Toggle by application:
+          </Typography>
+          <FormGroup className="mt-2 w-full">
+            {patchRules.apps.map((app) => {
+              return (
+                <Grid
+                  key={app.id}
+                  className="spacing-4 border-b border-gray-300 py-1"
+                  container
+                >
+                  <Grid size={4}>
+                    <h3>{app.name}</h3>
+                  </Grid>
+                  <Grid size={6} height="min-content">
+                    <dl className="text-sm">
+                      <dt>Current Version:</dt>
+                      <dd>{app.currentVersion}</dd>
+
+                      <dt>Last Updated:</dt>
+                      <dd>{formateDate(app.lastUpdateDate)}</dd>
+                    </dl>
+                  </Grid>
+                  <Grid size={2} className="text-right">
+                    <ToggleInput
+                      id={app.id}
+                      label={app.name}
+                      value={app.autoUpdate}
+                      onChange={onToggleAutoUpdateApplication}
+                      hideLabel
+                      className="w-auto"
+                    />
+                  </Grid>
+                </Grid>
+              );
+            })}
+          </FormGroup>
+        </>
+      )}
     </Box>
   );
 };

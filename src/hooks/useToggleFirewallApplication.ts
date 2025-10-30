@@ -1,11 +1,11 @@
-import type { App, SecuritySettings } from "@/types/security-settings";
+import type { FirewallApp, Firewall } from "@/types/firewall";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useNotificationContext } from "@/contexts/NotificationContext";
+import { QUERY_KEY } from "@/mocks/data/query-key";
 
-export const useUpdateFirewallApp = (
-  onSuccess?: () => void,
-  onError?: () => void,
-) => {
+export const useToggleFirewallApplication = () => {
   const queryClient = useQueryClient();
+  const { notifySaved, notifyError } = useNotificationContext();
 
   return useMutation({
     mutationFn: async ({
@@ -15,57 +15,51 @@ export const useUpdateFirewallApp = (
       id: string;
       value: boolean | number | string;
     }) => {
-      const response = await fetch(`/security-settings/firewall/${id}`, {
+      const response = await fetch(`/firewall/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ value }),
       });
       if (!response.ok) throw new Error(`Failed to update firewall for ${id}`);
 
-      return (await response.json()) as SecuritySettings;
+      return (await response.json()) as Firewall;
     },
     onMutate: async ({ id, value }, context) => {
       // cancel any outgoing refetches (so they don't overwrite our optimistic update)
-      await context.client.cancelQueries({ queryKey: ["securitySettings"] });
+      await context.client.cancelQueries({ queryKey: [QUERY_KEY.firewall] });
 
       // snapshot previous value
-      const previousSettings = queryClient.getQueryData(["securitySettings"]);
+      const previousSettings = queryClient.getQueryData([QUERY_KEY.firewall]);
 
       // optimistically update to the new value
-      queryClient.setQueryData(
-        ["securitySettings"],
-        (old: SecuritySettings) => ({
-          ...old,
-          apps: old.apps.map((a: App) =>
-            a.id === id ? { ...a, firewall: value } : a,
-          ),
-        }),
-      );
+      queryClient.setQueryData([QUERY_KEY.firewall], (old: Firewall) => ({
+        ...old,
+        apps: old.apps.map((a: FirewallApp) =>
+          a.id === id ? { ...a, firewall: value } : a,
+        ),
+      }));
 
       return { previousSettings };
     },
     onError: (_err, _newApp, onMutateResult, context) => {
       context.client.setQueryData(
-        ["securitySettings"],
+        [QUERY_KEY.firewall],
         onMutateResult?.previousSettings,
       );
-      onError?.();
+      notifyError();
     },
     onSuccess: (updatedSettings) => {
-      queryClient.setQueryData(
-        ["securitySettings"],
-        (old: SecuritySettings) => ({
-          ...old,
-          apps: updatedSettings.apps,
-          firewall: old.firewall, // do not override global firewall on app updates
-        }),
-      );
+      queryClient.setQueryData([QUERY_KEY.firewall], (old: Firewall) => ({
+        ...old,
+        apps: updatedSettings.apps,
+        firewall: old.firewall, // do not override global firewall on app updates
+      }));
 
-      onSuccess?.();
+      notifySaved();
     },
     // adding onSettled is best practise (according to the docs)
     // but if i leave this in it reverts back to the mock data since it's all mock apis
     // onSettled: (_data, _error, _variables, _mutateContext, context) =>
-    //   context.client.invalidateQueries({ queryKey: ["securitySettings"] }),
+    //   context.client.invalidateQueries({ queryKey: [QUERY_KEY.firewall] }),
   });
 };

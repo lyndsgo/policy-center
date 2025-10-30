@@ -1,13 +1,50 @@
 import { useFirewall } from "@/hooks/useFirewall";
 import { useToggleFirewall } from "@/hooks/useToggleFirewall";
 import { useToggleFirewallApplication } from "@/hooks/useToggleFirewallApplication";
+
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import ToggleInput from "@/components/ToggleInput/ToggleInput";
 import FormGroup from "@mui/material/FormGroup";
+// import Button from "@mui/material/Button";
+// import { useState } from "react";
+
+// import Modal, { type ModalProps } from "@/components/Modal/Modal";
+// import FormControl from "@mui/material/FormControl";
+// import InputLabel from "@mui/material/InputLabel";
+// import { type SelectChangeEvent } from "@mui/material/Select";
+// import TextField from "@mui/material/TextField";
+
+// type AddApplicationModalProps = Pick<ModalProps, "open" | "setOpen">;
+
+// const AddApplicationModal = ({ open, setOpen }: AddApplicationModalProps) => {
+//   const [value, setValue] = useState("");
+
+//   const handleChange = (e: SelectChangeEvent) => {
+//     setValue(e.target.value);
+//   };
+
+//   return (
+//     <Modal
+//       open={open}
+//       setOpen={setOpen}
+//       title="Add an Application"
+//       description="Bypass the firewall rules"
+//     >
+//       <FormControl fullWidth>
+//         <InputLabel id="select-an-application">
+//           Select an application
+//         </InputLabel>
+//         <TextField id="outlined-basic" label="Outlined" variant="outlined" />
+//       </FormControl>
+//     </Modal>
+//   );
+// };
 
 const FirewallPage = () => {
   const { data: firewall, isLoading } = useFirewall();
+
+  // const [addApplicationModalOpen, setAddApplicationModalOpen] = useState(false);
 
   const toggleFirewall = useToggleFirewall();
   const toggleFirewallApplication = useToggleFirewallApplication();
@@ -19,6 +56,10 @@ const FirewallPage = () => {
   const onToggleFirewallApplication = (id: string, value: boolean) => {
     toggleFirewallApplication.mutate({ id, value });
   };
+
+  // const openAddApplicationModal = () => {
+  //   setAddApplicationModalOpen(true);
+  // };
 
   return isLoading || !firewall ? (
     <>Loading</>
@@ -64,6 +105,11 @@ const FirewallPage = () => {
               );
             })}
           </FormGroup>
+          {/* <Button onClick={openAddApplicationModal}>Add application</Button> */}
+          {/* <AddApplicationModal
+            open={addApplicationModalOpen}
+            setOpen={setAddApplicationModalOpen}
+          /> */}
         </>
       )}
     </Box>

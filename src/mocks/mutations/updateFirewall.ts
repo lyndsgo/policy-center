@@ -1,44 +1,44 @@
 import { http, HttpResponse } from "msw";
-import { MOCK_SECURITY_SETTINGS } from "../data/security-settings";
-import type { App, SecuritySettings } from "@/types/security-settings";
+import { MOCK_FIREWALL } from "@/mocks/data/firewall";
+import type { FirewallApp, Firewall } from "@/types/firewall";
 
-export const UPDATE_FIREWALL_ALL = http.patch(
-  `/security-settings/firewall`,
+export const TOGGLE_GLOBAL_FIREWALL = http.patch(
+  `/firewall`,
   async ({ request }) => {
     const response = (await request.json()) as {
-      value?: SecuritySettings["firewall"];
+      value?: Firewall["firewall"];
     };
 
-    if (!response.value) {
+    if (response.value === undefined) {
       return new HttpResponse(null, { status: 500 });
     }
 
     return HttpResponse.json({
-      ...MOCK_SECURITY_SETTINGS,
+      ...MOCK_FIREWALL,
       firewall: response.value,
     });
   },
 );
 
 export const UPDATE_FIREWALL_APP = http.patch(
-  `/security-settings/firewall/:id`,
+  `/firewall/:id`,
   async ({ params, request }) => {
     const { id } = params;
     const response = (await request.json()) as {
-      value?: App["firewall"];
+      value?: FirewallApp["firewall"];
     };
 
-    // update the mock device in-memory
-    const appIndex = MOCK_SECURITY_SETTINGS.apps.findIndex((p) => p.id === id);
-    if (appIndex === -1 || !response.value) {
+    // update the mock firewall rule in-memory
+    const appIndex = MOCK_FIREWALL.apps.findIndex((p) => p.id === id);
+    if (appIndex === -1 || response.value === undefined) {
       return new HttpResponse(null, { status: 500 });
     }
 
-    MOCK_SECURITY_SETTINGS.apps[appIndex] = {
-      ...MOCK_SECURITY_SETTINGS.apps[appIndex],
+    MOCK_FIREWALL.apps[appIndex] = {
+      ...MOCK_FIREWALL.apps[appIndex],
       firewall: response.value,
     };
 
-    return HttpResponse.json(MOCK_SECURITY_SETTINGS);
+    return HttpResponse.json(MOCK_FIREWALL);
   },
 );
