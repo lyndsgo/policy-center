@@ -18,6 +18,7 @@ const AppRoutes = () => {
           <Route path={ROUTES.patchRules} element={<PatchRulesPage />} />
           <Route path={ROUTES.firewall} element={<FirewallPage />} />
           <Route path={ROUTES.whitelist} element={<WhitelistPage />} />
+          <Route path="*" element={<>Not found</>} />
         </Route>
       </Routes>
     </BrowserRouter>
