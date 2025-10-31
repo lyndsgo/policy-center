@@ -3,19 +3,21 @@ import { MOCK_DEVICE } from "@/mocks/data/device";
 import type { DevicePolicy } from "@/types/device";
 
 export const UPDATE_DEVICE_POLICY = http.patch(
-  `/device/policies/:id`,
+  "/device/policies/:id",
   async ({ params, request }) => {
     const { id } = params;
     const response = (await request.json()) as {
       value: DevicePolicy["value"];
     };
 
+    // example error to show UI
     if (id === "enforce-mfa") {
       return HttpResponse.json(
         { message: "Something went wrong updating policy" },
         { status: 500 },
       );
     }
+
     // update the mock device in-memory
     const policyIndex = MOCK_DEVICE.policies.findIndex((p) => p.id === id);
     if (policyIndex === -1) {

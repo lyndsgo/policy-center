@@ -1,8 +1,8 @@
 import { http, HttpResponse } from "msw";
-import { MOCK_WHITELIST } from "../data/whitelist";
+import { MOCK_WHITELIST } from "@/mocks/data/whitelist";
 
 export const CREATE_WHITELIST_ITEM = http.post(
-  `/whitelist`,
+  "/whitelist",
   async ({ request }) => {
     const response = (await request.json()) as { ip: string };
 

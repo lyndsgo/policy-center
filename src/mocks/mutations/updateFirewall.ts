@@ -4,12 +4,8 @@ import type { FirewallApp, Firewall } from "@/types/firewall";
 
 export const UPDATE_FIREWALL = http.patch("/firewall", async ({ request }) => {
   const response = (await request.json()) as {
-    value?: Firewall["firewall"];
+    value: Firewall["firewall"];
   };
-
-  if (response.value === undefined) {
-    return new HttpResponse({ error: "An error occurred" }, { status: 500 });
-  }
 
   return HttpResponse.json(
     {
@@ -21,7 +17,7 @@ export const UPDATE_FIREWALL = http.patch("/firewall", async ({ request }) => {
 });
 
 export const UPDATE_FIREWALL_APP = http.patch(
-  `/firewall/application/:id`,
+  "/firewall/application/:id",
   async ({ params, request }) => {
     const { id } = params;
     const response = (await request.json()) as {

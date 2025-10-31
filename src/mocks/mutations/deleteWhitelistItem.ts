@@ -1,8 +1,8 @@
 import { http, HttpResponse } from "msw";
-import { MOCK_WHITELIST } from "../data/whitelist";
+import { MOCK_WHITELIST } from "@/mocks/data/whitelist";
 
 export const DELETE_WHITELIST_ITEM = http.delete(
-  `/whitelist/:id`,
+  "/whitelist/:id",
   ({ params }) => {
     const { id } = params;
 

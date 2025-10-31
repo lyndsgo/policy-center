@@ -3,7 +3,7 @@ import type { PatchRulesApp, PatchRules } from "@/types/patch-rules";
 import { MOCK_PATCH_RULES } from "@/mocks/data/patch-rules";
 
 export const UPDATE_PATCH_RULES = http.patch(
-  `/patch-rules`,
+  "/patch-rules",
   async ({ request }) => {
     const response = (await request.json()) as {
       value: PatchRules["autoUpdate"];
@@ -20,7 +20,7 @@ export const UPDATE_PATCH_RULES = http.patch(
 );
 
 export const UPDATE_PATCH_RULE_APP = http.patch(
-  `/patch-rules/application/:id`,
+  "/patch-rules/application/:id",
   async ({ params, request }) => {
     const { id } = params;
     const response = (await request.json()) as {

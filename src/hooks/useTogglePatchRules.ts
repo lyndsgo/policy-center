@@ -9,7 +9,7 @@ export const useTogglePatchRules = () => {
 
   return useMutation({
     mutationFn: async ({ value }: { value: boolean }) => {
-      const response = await fetch(`/patch-rules`, {
+      const response = await fetch("/patch-rules", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ value }),
