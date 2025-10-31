@@ -53,7 +53,7 @@ Please make sure to run the app in development mode, I'm using MSW to mock the a
 - React-hook-form & Zod
   - For form handling and validation. React-hook-form is good for giving immediate feedback to users. It's more maintainable and scalable than managing form state and validation manually. It also allows for more easy control over inputs.
 - Structure
-- The app structure has been set up for scalability and maintainability. The folder organisation clearly separates concerns, making it easier to locate, modify, and extend functionality as the project grows.
+  - The app structure has been set up for scalability and maintainability. The folder organisation clearly separates concerns, making it easier to locate, modify, and extend functionality as the project grows.
 
 ## Accessibility considerations
 
