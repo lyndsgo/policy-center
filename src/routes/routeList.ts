@@ -1,6 +1,7 @@
-export const RoutesList = {
-  HomePage: "/",
-  DevicePolicy: "/device-policy",
-  PatchRules: "/patch-rules",
-  Firewall: "/firewall",
+export const ROUTES = {
+  homePage: "/",
+  devicePolicy: "/device-policy",
+  patchRules: "/patch-rules",
+  firewall: "/firewall",
+  whitelist: "/whitelist",
 };

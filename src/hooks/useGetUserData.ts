@@ -1,11 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import type { User } from "@/types/user";
+import { QUERY_KEY } from "@/mocks/data/query-key";
 
-export const useUserData = () => {
+export const useGetUserData = () => {
   return useQuery({
-    queryKey: ["userData"],
+    queryKey: [QUERY_KEY.userData],
     queryFn: async (): Promise<User> => {
-      const response = await fetch(`/user`);
+      const response = await fetch("/user");
 
       if (!response.ok) {
         throw new Error("There was an error when fetching user data");

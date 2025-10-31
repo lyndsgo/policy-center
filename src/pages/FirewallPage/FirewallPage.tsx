@@ -1,13 +1,15 @@
-import { useFirewall } from "@/hooks/useFirewall";
+import { useGetFirewall } from "@/hooks/useGetFirewall";
 import { useToggleFirewall } from "@/hooks/useToggleFirewall";
 import { useToggleFirewallApplication } from "@/hooks/useToggleFirewallApplication";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import ToggleInput from "@/components/ToggleInput/ToggleInput";
 import FormGroup from "@mui/material/FormGroup";
+import Alert from "@mui/material/Alert";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const FirewallPage = () => {
-  const { data: firewall, isLoading } = useFirewall();
+  const { data: firewall, isLoading, isError } = useGetFirewall();
 
   const toggleFirewall = useToggleFirewall();
   const toggleFirewallApplication = useToggleFirewallApplication();
@@ -20,8 +22,11 @@ const FirewallPage = () => {
     toggleFirewallApplication.mutate({ id, value });
   };
 
+  //!TODO: proper/better error handling
+  if (isError) return <Alert severity="error">Error fetching firewall</Alert>;
+
   return isLoading || !firewall ? (
-    <>Loading</>
+    <CircularProgress />
   ) : (
     <Box>
       <Typography variant="h5" component="h1">
@@ -52,7 +57,7 @@ const FirewallPage = () => {
               return (
                 <Box
                   key={app.id}
-                  className="flex w-full items-center justify-between border-b border-gray-300 py-1"
+                  className="flex w-full items-center justify-between border-b border-gray-300 last:border-b-0"
                 >
                   <ToggleInput
                     id={app.id}

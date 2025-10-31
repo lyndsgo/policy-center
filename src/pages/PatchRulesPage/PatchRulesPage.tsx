@@ -1,5 +1,5 @@
 import ToggleInput from "@/components/ToggleInput/ToggleInput";
-import { usePatchRules } from "@/hooks/usePatchRules";
+import { useGetPatchRules } from "@/hooks/useGetPatchRules";
 import { useTogglePatchRules } from "@/hooks/useTogglePatchRules";
 import { useTogglePatchRuleApplication } from "@/hooks/useTogglePatchRuleApplication";
 import { formateDate } from "@/utils/formate-date";
@@ -7,9 +7,11 @@ import Box from "@mui/material/Box";
 import FormGroup from "@mui/material/FormGroup";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
+import Alert from "@mui/material/Alert";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const PatchRulesPage = () => {
-  const { data: patchRules, isLoading } = usePatchRules();
+  const { data: patchRules, isLoading, isError } = useGetPatchRules();
 
   const toggleAutoUpdate = useTogglePatchRules();
   const toggleAutoUpdateApplication = useTogglePatchRuleApplication();
@@ -22,8 +24,12 @@ const PatchRulesPage = () => {
     toggleAutoUpdateApplication.mutate({ id, value });
   };
 
+  //!TODO: proper/better error handling
+  if (isError)
+    return <Alert severity="error">Error fetching patch rules</Alert>;
+
   return isLoading || !patchRules ? (
-    <>Loading</>
+    <CircularProgress />
   ) : (
     <Box>
       <Typography variant="h5" component="h1">
@@ -49,7 +55,7 @@ const PatchRulesPage = () => {
               return (
                 <Grid
                   key={app.id}
-                  className="spacing-4 border-b border-gray-300 py-1"
+                  className="spacing-4 border-b border-gray-300 py-1 last:border-b-0"
                   container
                 >
                   <Grid size={4}>

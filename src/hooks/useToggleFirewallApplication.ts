@@ -8,53 +8,47 @@ export const useToggleFirewallApplication = () => {
   const { notifySaved, notifyError } = useNotificationContext();
 
   return useMutation({
-    mutationFn: async ({
-      id,
-      value,
-    }: {
-      id: string;
-      value: boolean | number | string;
-    }) => {
-      const response = await fetch(`/firewall/${id}`, {
+    mutationFn: async ({ id, value }: { id: string; value: boolean }) => {
+      const response = await fetch(`/firewall/application/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ value }),
       });
       if (!response.ok) throw new Error(`Failed to update firewall for ${id}`);
 
-      return (await response.json()) as Firewall;
+      return (await response.json()) as FirewallApp;
     },
     onMutate: async ({ id, value }, context) => {
       // cancel any outgoing refetches (so they don't overwrite our optimistic update)
       await context.client.cancelQueries({ queryKey: [QUERY_KEY.firewall] });
 
       // snapshot previous value
-      const previousSettings = queryClient.getQueryData([QUERY_KEY.firewall]);
+      const previousFirewall = queryClient.getQueryData([QUERY_KEY.firewall]);
 
       // optimistically update to the new value
-      queryClient.setQueryData([QUERY_KEY.firewall], (old: Firewall) => ({
-        ...old,
-        apps: old.apps.map((a: FirewallApp) =>
+      queryClient.setQueryData([QUERY_KEY.firewall], (cache: Firewall) => ({
+        ...cache,
+        apps: cache.apps.map((a: FirewallApp) =>
           a.id === id ? { ...a, firewall: value } : a,
         ),
       }));
 
-      return { previousSettings };
+      return { previousFirewall };
     },
     onError: (_err, _newApp, onMutateResult, context) => {
       context.client.setQueryData(
         [QUERY_KEY.firewall],
-        onMutateResult?.previousSettings,
+        onMutateResult?.previousFirewall,
       );
       notifyError();
     },
-    onSuccess: (updatedSettings) => {
-      queryClient.setQueryData([QUERY_KEY.firewall], (old: Firewall) => ({
-        ...old,
-        apps: updatedSettings.apps,
-        firewall: old.firewall, // do not override global firewall on app updates
+    onSuccess: (updatedApp) => {
+      queryClient.setQueryData([QUERY_KEY.firewall], (cache: Firewall) => ({
+        ...cache,
+        apps: cache.apps.map((app: FirewallApp) =>
+          app.id === updatedApp.id ? updatedApp : app,
+        ),
       }));
-
       notifySaved();
     },
     // adding onSettled is best practise (according to the docs)

@@ -8,14 +8,8 @@ export const useTogglePatchRuleApplication = () => {
   const { notifySaved, notifyError } = useNotificationContext();
 
   return useMutation({
-    mutationFn: async ({
-      id,
-      value,
-    }: {
-      id: string;
-      value: boolean | number | string;
-    }) => {
-      const response = await fetch(`/patch-rules/${id}`, {
+    mutationFn: async ({ id, value }: { id: string; value: boolean }) => {
+      const response = await fetch(`/patch-rules/application/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ value }),
@@ -23,39 +17,41 @@ export const useTogglePatchRuleApplication = () => {
       if (!response.ok)
         throw new Error(`Failed to update patch rule for ${id}`);
 
-      return (await response.json()) as PatchRules;
+      return (await response.json()) as PatchRulesApp;
     },
     onMutate: async ({ id, value }, context) => {
       // cancel any outgoing refetches (so they don't overwrite our optimistic update)
       await context.client.cancelQueries({ queryKey: [QUERY_KEY.patchRules] });
 
       // snapshot previous value
-      const previousSettings = queryClient.getQueryData([QUERY_KEY.patchRules]);
+      const previousPatchRules = queryClient.getQueryData([
+        QUERY_KEY.patchRules,
+      ]);
 
       // optimistically update to the new value
-      queryClient.setQueryData([QUERY_KEY.patchRules], (old: PatchRules) => ({
-        ...old,
-        apps: old.apps.map((a: PatchRulesApp) =>
+      queryClient.setQueryData([QUERY_KEY.patchRules], (cache: PatchRules) => ({
+        ...cache,
+        apps: cache.apps.map((a: PatchRulesApp) =>
           a.id === id ? { ...a, autoUpdate: value } : a,
         ),
       }));
 
-      return { previousSettings };
+      return { previousPatchRules };
     },
     onError: (_err, _newApp, onMutateResult, context) => {
       context.client.setQueryData(
         [QUERY_KEY.patchRules],
-        onMutateResult?.previousSettings,
+        onMutateResult?.previousPatchRules,
       );
       notifyError();
     },
-    onSuccess: (updatedSettings) => {
-      queryClient.setQueryData([QUERY_KEY.patchRules], (old: PatchRules) => ({
-        ...old,
-        apps: updatedSettings.apps,
-        autoUpdate: old.autoUpdate, // do not override global autoUpdate on app specific updates
+    onSuccess: (updatedApp) => {
+      queryClient.setQueryData([QUERY_KEY.patchRules], (cache: PatchRules) => ({
+        ...cache,
+        apps: cache.apps.map((a: PatchRulesApp) =>
+          a.id === updatedApp.id ? updatedApp : a,
+        ),
       }));
-
       notifySaved();
     },
     // adding onSettled is best practise (according to the docs)

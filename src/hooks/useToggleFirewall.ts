@@ -8,8 +8,8 @@ export const useToggleFirewall = () => {
   const { notifySaved, notifyError } = useNotificationContext();
 
   return useMutation({
-    mutationFn: async ({ value }: { value: boolean | number | string }) => {
-      const response = await fetch(`/firewall`, {
+    mutationFn: async ({ value }: { value: boolean }) => {
+      const response = await fetch("/firewall", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ value }),
@@ -23,25 +23,25 @@ export const useToggleFirewall = () => {
       await context.client.cancelQueries({ queryKey: [QUERY_KEY.firewall] });
 
       // snapshot previous value
-      const previousSettings = queryClient.getQueryData([QUERY_KEY.firewall]);
+      const previousFirewall = queryClient.getQueryData([QUERY_KEY.firewall]);
 
       // optimistically update to the new value
-      queryClient.setQueryData([QUERY_KEY.firewall], (old: Firewall) => ({
-        ...old,
+      queryClient.setQueryData([QUERY_KEY.firewall], (cache: Firewall) => ({
+        ...cache,
         firewall: value,
       }));
 
-      return { previousSettings };
+      return { previousFirewall };
     },
-    onError: (_err, _newSettings, onMutateResult, context) => {
+    onError: (_err, _newData, onMutateResult, context) => {
       context.client.setQueryData(
         [QUERY_KEY.firewall],
-        onMutateResult?.previousSettings,
+        onMutateResult?.previousFirewall,
       );
       notifyError();
     },
-    onSuccess: (updatedSettings) => {
-      queryClient.setQueryData([QUERY_KEY.firewall], updatedSettings);
+    onSuccess: (updatedFirewall) => {
+      queryClient.setQueryData([QUERY_KEY.firewall], updatedFirewall);
 
       notifySaved();
     },

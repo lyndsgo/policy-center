@@ -5,17 +5,17 @@ import { useId, type ReactNode } from "react";
 
 export interface ModalProps {
   open: boolean;
-  setOpen: (open: boolean) => void;
+  onClose: () => void;
   title: string;
-  description: string;
+  description?: string;
   children?: ReactNode;
 }
 
-const Modal = ({ open, setOpen, title, description, children }: ModalProps) => {
+const Modal = ({ open, onClose, title, description, children }: ModalProps) => {
   const id = useId();
 
   const handleClose = () => {
-    setOpen(false);
+    onClose();
   };
 
   return (
@@ -23,13 +23,15 @@ const Modal = ({ open, setOpen, title, description, children }: ModalProps) => {
       open={open}
       onClose={handleClose}
       aria-labelledby={`${id}-title`}
-      aria-describedby={`${id}-desc`}
+      aria-describedby={description ? `${id}-desc` : undefined}
     >
       <Box className="absolute top-1/2 left-1/2 w-[500px] max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 rounded-3xl bg-white p-4">
         <Typography id={`${id}-title`} variant="h6" component="h2">
           {title}
         </Typography>
-        <Typography id={`${id}-desc`}>{description}</Typography>
+        {description && (
+          <Typography id={`${id}-desc`}>{description}</Typography>
+        )}
         {children}
       </Box>
     </MuiModal>

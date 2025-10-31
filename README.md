@@ -50,6 +50,8 @@ Please make sure to run the app in development mode, I'm using MSW to mock the a
   - Again, just enforcing best practises. Using Husky means best practises are more likely to be followed as they are applied at commit-level, and can help prevent issues with formatting and bugs.
 - Material UI / TailwindCSS
   - I chose to go with the combo of Material UI and TailwindCSS because I know that's what you guys are using in your project. As discussed in the interview, I mentioned I hadn't used TailwindCSS for a while, and I have never used MUI. I can see the benefits of MUI when there is no custom component library in place, it helps development time, is responsive and considers accessibility standards.
+- React-hook-form & Zod
+  - For form handling and validation. React-hook-form is good for giving immediate feedback to users. It's more maintainable and scalable than managing form state and validation manually. It also allows for more easy control over inputs.
 - Structure
 - The app structure has been set up for scalability and maintainability. The folder organisation clearly separates concerns, making it easier to locate, modify, and extend functionality as the project grows.
 
@@ -73,8 +75,7 @@ I've tried my best to adhere to the WAG AA guidelines, for example:
 - Integrate real authentication flows and user roles, e.g. JWT or OAuth.
 - Add route protection for pages that require authentication.
 - Replace MSW mocks with real API endpoints.
-- Add robust error handling and loading states for API requests.
-- I’d use react-hook-form together with Zod for form handling and validation. React-hook-form is good for giving immediate feedback to users. It's more maintainable and scalable than managing form state and validation manually.
+- Add better/more robust error handling and loading states for API requests.
 - Evaluate using a global state solution like Zustand for caching and managing server state.
 - Add end-to-end testing, to help ensure the app works as expected across flows (rather than just unit testing).
 - I’d enforce a minimum code-coverage check, either to Husky as a pre-commit, or in the pipeline, so that any PR failing to meet the standard is blocked before merging.

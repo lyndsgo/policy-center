@@ -1,11 +1,13 @@
 import ToggleInput from "@/components/ToggleInput/ToggleInput";
-import { useDeviceData } from "@/hooks/useDeviceData";
+import { useGetDeviceData } from "@/hooks/useGetDeviceData";
 import { useTogglePolicy } from "@/hooks/useTogglePolicy";
 import type { DevicePolicy } from "@/types/device";
 import Box from "@mui/material/Box";
 import FormGroup from "@mui/material/FormGroup";
 import Typography from "@mui/material/Typography";
 import { formateDate } from "@/utils/formate-date";
+import Alert from "@mui/material/Alert";
+import CircularProgress from "@mui/material/CircularProgress";
 
 interface PolicyInputProps extends DevicePolicy {
   onChange: (id: string, value: boolean) => void;
@@ -31,7 +33,7 @@ export const PolicyInput = ({
 };
 
 const DevicePolicyPage = () => {
-  const { data: deviceData, isLoading } = useDeviceData();
+  const { data: deviceData, isLoading, isError } = useGetDeviceData();
 
   const togglePolicy = useTogglePolicy();
 
@@ -39,8 +41,12 @@ const DevicePolicyPage = () => {
     togglePolicy.mutate({ id, value });
   };
 
+  //!TODO: proper/better error handling
+  if (isError)
+    return <Alert severity="error">Error fetching device data</Alert>;
+
   return isLoading || !deviceData ? (
-    <>Loading</>
+    <CircularProgress />
   ) : (
     <>
       <Typography variant="h5" component="h1">
@@ -68,7 +74,7 @@ const DevicePolicyPage = () => {
           return (
             <Box
               key={policy.id}
-              className="flex w-full items-center justify-between border-b border-gray-300 py-1"
+              className="flex w-full items-center justify-between border-b border-gray-300 py-1 last:border-b-0"
             >
               <PolicyInput {...policy} onChange={onTogglePolicy} />
             </Box>

@@ -1,4 +1,4 @@
-import { useUserData } from "@/hooks/useUserData";
+import { useGetUserData } from "@/hooks/useGetUserData";
 import type { User } from "@/types/user";
 import { useContext, createContext, type PropsWithChildren } from "react";
 
@@ -9,7 +9,7 @@ interface AuthContextObject {
 export const AuthContext = createContext<AuthContextObject>({});
 
 export const AuthProvider = (props: PropsWithChildren) => {
-  const { data: userData } = useUserData();
+  const { data: userData } = useGetUserData();
 
   //!TODO: could have login, logout, etc
 

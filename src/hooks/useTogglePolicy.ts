@@ -8,13 +8,7 @@ export const useTogglePolicy = () => {
   const { notifySaved, notifyError } = useNotificationContext();
 
   return useMutation({
-    mutationFn: async ({
-      id,
-      value,
-    }: {
-      id: string;
-      value: boolean | number | string;
-    }) => {
+    mutationFn: async ({ id, value }: { id: string; value: boolean }) => {
       const response = await fetch(`/device/policies/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -22,7 +16,7 @@ export const useTogglePolicy = () => {
       });
       if (!response.ok) throw new Error("Failed to update policy");
 
-      return (await response.json()) as Device;
+      return (await response.json()) as DevicePolicy;
     },
     onMutate: async ({ id, value }, context) => {
       // cancel any outgoing refetches (so they don't overwrite our optimistic update)
@@ -32,9 +26,9 @@ export const useTogglePolicy = () => {
       const previousDeviceData = queryClient.getQueryData([QUERY_KEY.device]);
 
       // optimistically update to the new value
-      queryClient.setQueryData([QUERY_KEY.device], (old: Device) => ({
-        ...old,
-        policies: old.policies.map((p: DevicePolicy) =>
+      queryClient.setQueryData([QUERY_KEY.device], (cache: Device) => ({
+        ...cache,
+        policies: cache.policies.map((p: DevicePolicy) =>
           p.id === id ? { ...p, value } : p,
         ),
       }));
@@ -48,8 +42,13 @@ export const useTogglePolicy = () => {
       );
       notifyError();
     },
-    onSuccess: (updatedDevice) => {
-      queryClient.setQueryData([QUERY_KEY.device], updatedDevice);
+    onSuccess: (updatedPolicy) => {
+      queryClient.setQueryData([QUERY_KEY.device], (cache: Device) => ({
+        ...cache,
+        policies: cache.policies.map((policy: DevicePolicy) =>
+          policy.id === updatedPolicy.id ? updatedPolicy : policy,
+        ),
+      }));
       notifySaved();
     },
     // adding onSettled is best practise (according to the docs)

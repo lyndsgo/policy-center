@@ -9,7 +9,6 @@ export const useTogglePatchRules = () => {
 
   return useMutation({
     mutationFn: async ({ value }: { value: boolean }) => {
-      console.log(value);
       const response = await fetch(`/patch-rules`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -20,33 +19,31 @@ export const useTogglePatchRules = () => {
       return (await response.json()) as PatchRules;
     },
     onMutate: async ({ value }, context) => {
-      console.log("onMutate", value);
       // cancel any outgoing refetches (so they don't overwrite our optimistic update)
       await context.client.cancelQueries({ queryKey: [QUERY_KEY.patchRules] });
 
       // snapshot previous value
-      const previousSettings = queryClient.getQueryData([QUERY_KEY.patchRules]);
+      const previousPatchRules = queryClient.getQueryData([
+        QUERY_KEY.patchRules,
+      ]);
 
       // optimistically update to the new value
-      queryClient.setQueryData([QUERY_KEY.patchRules], (old: PatchRules) => ({
-        ...old,
+      queryClient.setQueryData([QUERY_KEY.patchRules], (cache: PatchRules) => ({
+        ...cache,
         autoUpdate: value,
       }));
 
-      return { previousSettings };
+      return { previousPatchRules };
     },
-    onError: (_err, _newSettings, onMutateResult, context) => {
-      console.log("onError");
+    onError: (_err, _newData, onMutateResult, context) => {
       context.client.setQueryData(
         [QUERY_KEY.patchRules],
-        onMutateResult?.previousSettings,
+        onMutateResult?.previousPatchRules,
       );
       notifyError();
     },
-    onSuccess: (updatedSettings) => {
-      console.log("onSuccess", updatedSettings);
-      queryClient.setQueryData([QUERY_KEY.patchRules], updatedSettings);
-
+    onSuccess: (updatedPatchRules) => {
+      queryClient.setQueryData([QUERY_KEY.patchRules], updatedPatchRules);
       notifySaved();
     },
     // adding onSettled is best practise (according to the docs)

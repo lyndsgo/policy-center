@@ -1,26 +1,32 @@
 import PolicyIcon from "@mui/icons-material/Policy";
 import SecurityUpdateWarningIcon from "@mui/icons-material/SecurityUpdateWarning";
 import LocalFireDepartmentIcon from "@mui/icons-material/LocalFireDepartment";
+import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { cn } from "@/utils/cn";
-import { RoutesList } from "@/routes/routeList";
+import { ROUTES } from "@/routes/routeList";
 import Box from "@mui/material/Box";
 
-const navItems = [
+export const NAV_ITEMS = [
   {
     icon: PolicyIcon,
-    url: RoutesList.DevicePolicy,
+    url: ROUTES.devicePolicy,
     title: "Device Policy",
   },
   {
     icon: LocalFireDepartmentIcon,
-    url: RoutesList.Firewall,
+    url: ROUTES.firewall,
     title: "Firewall",
   },
   {
     icon: SecurityUpdateWarningIcon,
-    url: RoutesList.PatchRules,
+    url: ROUTES.patchRules,
     title: "Patch Rules",
+  },
+  {
+    icon: VerifiedUserIcon,
+    url: ROUTES.whitelist,
+    title: "Whitelist",
   },
 ];
 
@@ -39,7 +45,7 @@ export const PageLayout = () => {
           </Link>
           <nav className="mt-4">
             <ul>
-              {navItems.map((item) => {
+              {NAV_ITEMS.map((item) => {
                 const Icon = item.icon;
                 return (
                   <li key={item.url}>
@@ -67,7 +73,7 @@ export const PageLayout = () => {
         >
           <Box
             className={cn(
-              pathname === RoutesList.HomePage
+              pathname === ROUTES.homePage
                 ? "md:max-w-[700px]"
                 : "md:max-w-[500px]",
             )}
