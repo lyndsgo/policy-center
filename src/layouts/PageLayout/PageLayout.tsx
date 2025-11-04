@@ -38,7 +38,7 @@ export const PageLayout = () => {
       <a className="sr-only" href="#main">
         Skip to content
       </a>
-      <Box className="bg-brand-light flex flex-wrap md:h-full md:p-10">
+      <Box className="bg-brand-light md:no-wrap flex flex-wrap md:h-full md:p-10">
         <Box className="bg-brand-dark h-full w-full min-w-64 p-4 text-white md:w-1/5 md:rounded-3xl">
           <Link to="/" className="text-xl">
             PolicyCenter
@@ -69,7 +69,7 @@ export const PageLayout = () => {
         <Box
           id="main"
           component="main"
-          className="grow p-4 md:h-full md:overflow-scroll"
+          className="flex-1 p-4 md:h-full md:overflow-scroll"
         >
           <Box
             className={cn(
