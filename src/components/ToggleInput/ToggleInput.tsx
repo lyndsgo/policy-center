@@ -43,9 +43,7 @@ const ToggleInput = ({
   value,
   onChange,
 }: ToggleProps) => {
-  const [checked, setChecked] = useState(
-    value === true || value === "true" ? true : false,
-  );
+  const [checked, setChecked] = useState(value === true || value === "true");
 
   const handleOnChange = useCallback(() => {
     setChecked(!checked);
@@ -53,7 +51,7 @@ const ToggleInput = ({
   }, [id, checked, onChange]);
 
   useEffect(() => {
-    setChecked(value === true || value === "true" ? true : false);
+    setChecked(value === true || value === "true");
   }, [value]);
 
   return (
